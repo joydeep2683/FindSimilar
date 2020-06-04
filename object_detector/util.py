@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import setting
+from PIL import Image
 
 
 def get_obj_img_by_bbox(frame, bbox):
@@ -14,11 +15,10 @@ def get_obj_img_by_bbox(frame, bbox):
     Returns:
         [np.array]: [cropped image]
     """
-    x, y = bbox[0], bbox[1]
-    w, h = bbox[2], bbox[3]
-    obj_img = frame[y:y+h, x:x+w, :]
-    rgb_frame = obj_img[:, :, ::-1]
-    return rgb_frame
+    img = Image.fromarray(frame)
+    img = img.crop(bbox)
+    img = np.asarray(img)
+    return img
 
 def get_yolo_v3_net():
     """[Create yolo v3 object detection net object]
