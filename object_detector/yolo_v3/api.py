@@ -1,4 +1,4 @@
-from object_detector.util import *
+from object_detector.yolo_v3.util import *
 import sys
 
 sys.path.append('../')

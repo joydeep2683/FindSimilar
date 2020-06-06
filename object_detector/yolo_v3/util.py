@@ -30,6 +30,15 @@ def get_yolo_v3_net():
     return net
 
 def get_object_detection_result(net_obj, frame):
+    """[summary]
+
+    Args:
+        net_obj ([type]): [description]
+        frame ([type]): [description]
+
+    Returns:
+        [type]: [description]
+    """
     with open(setting.COCO_NAMES, "r") as f:
         classes = [line.strip() for line in f.readlines()]
         layer_names = net_obj.getLayerNames()
