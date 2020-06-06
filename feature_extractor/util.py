@@ -24,7 +24,7 @@ class CommonFeatureExtractor(object):
 
     def __load_model_cov(self):
         model_conv = models.resnet18(pretrained=True)
-        layer = model_conv._modules.get('avgpool')
+        model_conv._modules.get('avgpool')
         model_conv.eval()
         last_layer = nn.Sequential(*list(model_conv.children())[:-1])
         return last_layer
@@ -39,3 +39,29 @@ class CommonFeatureExtractor(object):
         output = self.model(inp)
         output = [float(i[0][0]) for i in list(output[0])]
         return output
+
+    def get_vgg_extractable_layers (self):
+        vgg = models.vgg16(pretrained=True)
+        extractable_layers = []
+        for _, j in enumerate(list(vgg.children())):
+            for p, q in enumerate(list(j.children())):
+                if type(q) == torch.nn.modules.conv.Conv2d:
+                    extractable_layers.append(p+1)
+        extractable_layers.append('last_layer')
+        return extractable_layers
+
+    def get_available_layer_names(self, arch):
+        #callable API
+        if arch == 'vgg16':
+            layer_names = self.get_vgg_extractable_layers()
+            return layer_names
+
+    def get_desired_vgg_model(self, layer_name):
+        #callable API
+        vgg = models.vgg16(pretrained=True)
+        if type(layer_name) is int:
+            nth_layer = nn.Sequential(*list(vgg.children()[0][:layer_name]))
+            return nth_layer
+        if type(layer_name) is str:
+            nth_layer = nn.Sequential(*list(vgg.children())[:-1])
+            return nth_layer
